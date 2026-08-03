@@ -17,6 +17,7 @@ class _LoginPageState extends State<LoginPage> {
   // Untuk menampilkan atau menyembunyikan password
   bool passwordTersembunyi = true;
 
+  var isLoading = false;
   @override
   void dispose() {
     usernameController.dispose();
