@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'barang_page.dart';
+import 'peminjaman_saya_page.dart';
+import 'riwayat_page.dart';
+import 'profile_page.dart';
 
 class UserHomePage extends StatefulWidget {
   const UserHomePage({super.key});
@@ -9,22 +12,21 @@ class UserHomePage extends StatefulWidget {
 }
 
 class _UserHomePageState extends State<UserHomePage> {
-  // Index navbar yang sedang dipilih
   int _selectedIndex = 0;
 
   @override
   Widget build(BuildContext context) {
-    // Daftar halaman berdasarkan navbar
     final List<Widget> pages = [
       _dashboardPage(),
       const BarangPage(),
-      _riwayatPage(),
-      _profilPage(),
+      const RiwayatPage(),
+      const ProfilePage(),
     ];
 
     return Scaffold(
       backgroundColor: const Color(0xFFF2F4F8),
 
+      // APP BAR
       appBar: AppBar(
         backgroundColor: const Color(0xFF304B70),
         automaticallyImplyLeading: false,
@@ -63,10 +65,10 @@ class _UserHomePageState extends State<UserHomePage> {
         ],
       ),
 
-      // Isi berubah sesuai navbar
+      // HALAMAN BERUBAH SESUAI NAVBAR
       body: pages[_selectedIndex],
 
-      // Navbar tetap berada di bawah
+      // NAVBAR TETAP
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
 
@@ -86,8 +88,12 @@ class _UserHomePageState extends State<UserHomePage> {
 
         items: const [
           BottomNavigationBarItem(
-            icon: Icon(Icons.home_outlined),
-            activeIcon: Icon(Icons.home),
+            icon: Icon(
+              Icons.home_outlined,
+            ),
+            activeIcon: Icon(
+              Icons.home,
+            ),
             label: 'Beranda',
           ),
 
@@ -102,7 +108,9 @@ class _UserHomePageState extends State<UserHomePage> {
           ),
 
           BottomNavigationBarItem(
-            icon: Icon(Icons.history),
+            icon: Icon(
+              Icons.history,
+            ),
             label: 'Riwayat',
           ),
 
@@ -110,7 +118,9 @@ class _UserHomePageState extends State<UserHomePage> {
             icon: Icon(
               Icons.person_outline,
             ),
-            activeIcon: Icon(Icons.person),
+            activeIcon: Icon(
+              Icons.person,
+            ),
             label: 'Profil',
           ),
         ],
@@ -151,6 +161,7 @@ class _UserHomePageState extends State<UserHomePage> {
 
           const SizedBox(height: 25),
 
+          // KARTU INFORMASI
           Row(
             children: [
               Expanded(
@@ -188,7 +199,7 @@ class _UserHomePageState extends State<UserHomePage> {
 
           const SizedBox(height: 15),
 
-          // MENU DAFTAR BARANG
+          // MENU BARANG
           _menuCard(
             icon:
                 Icons.inventory_2_outlined,
@@ -205,6 +216,7 @@ class _UserHomePageState extends State<UserHomePage> {
 
           const SizedBox(height: 15),
 
+          // MENU PEMINJAMAN SAYA
           _menuCard(
             icon:
                 Icons.assignment_outlined,
@@ -212,10 +224,21 @@ class _UserHomePageState extends State<UserHomePage> {
                 'Peminjaman Saya',
             deskripsi:
                 'Lihat status peminjaman barang',
+
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>
+                      const PeminjamanSayaPage(),
+                ),
+              );
+            },
           ),
 
           const SizedBox(height: 15),
 
+          // MENU RIWAYAT
           _menuCard(
             icon: Icons.history,
             judul:
@@ -232,6 +255,7 @@ class _UserHomePageState extends State<UserHomePage> {
 
           const SizedBox(height: 15),
 
+          // MENU PROFIL
           _menuCard(
             icon:
                 Icons.person_outline,
@@ -248,38 +272,6 @@ class _UserHomePageState extends State<UserHomePage> {
 
           const SizedBox(height: 20),
         ],
-      ),
-    );
-  }
-
-  // =========================
-  // HALAMAN RIWAYAT SEMENTARA
-  // =========================
-
-  Widget _riwayatPage() {
-    return const Center(
-      child: Text(
-        'Halaman Riwayat',
-        style: TextStyle(
-          fontSize: 20,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-    );
-  }
-
-  // =========================
-  // HALAMAN PROFIL SEMENTARA
-  // =========================
-
-  Widget _profilPage() {
-    return const Center(
-      child: Text(
-        'Halaman Profil',
-        style: TextStyle(
-          fontSize: 20,
-          fontWeight: FontWeight.bold,
-        ),
       ),
     );
   }
@@ -304,11 +296,10 @@ class _UserHomePageState extends State<UserHomePage> {
 
         boxShadow: [
           BoxShadow(
-            color: Colors.black
-                .withValues(alpha: 0.08),
-
+            color: Colors.black.withValues(
+              alpha: 0.08,
+            ),
             blurRadius: 10,
-
             offset:
                 const Offset(0, 4),
           ),
@@ -359,21 +350,10 @@ class _UserHomePageState extends State<UserHomePage> {
     required IconData icon,
     required String judul,
     required String deskripsi,
-    VoidCallback? onTap,
+    required VoidCallback onTap,
   }) {
     return InkWell(
-      onTap: onTap ??
-          () {
-            ScaffoldMessenger.of(
-              context,
-            ).showSnackBar(
-              SnackBar(
-                content: Text(
-                  '$judul belum dibuat',
-                ),
-              ),
-            );
-          },
+      onTap: onTap,
 
       borderRadius:
           BorderRadius.circular(16),
@@ -392,13 +372,10 @@ class _UserHomePageState extends State<UserHomePage> {
 
           boxShadow: [
             BoxShadow(
-              color: Colors.black
-                  .withValues(
+              color: Colors.black.withValues(
                 alpha: 0.06,
               ),
-
               blurRadius: 10,
-
               offset:
                   const Offset(0, 4),
             ),
@@ -480,3 +457,7 @@ class _UserHomePageState extends State<UserHomePage> {
     );
   }
 }
+
+// =========================
+// HALAMAN PROFIL SEMENTARA
+// =========================

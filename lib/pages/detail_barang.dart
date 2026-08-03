@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'pengajuan_peminjaman_page.dart';
 
 class DetailBarangPage extends StatelessWidget {
   final String nama;
@@ -195,15 +196,16 @@ class DetailBarangPage extends StatelessWidget {
               child: ElevatedButton(
                 onPressed: tersedia
                     ? () {
-                        ScaffoldMessenger.of(
-                          context,
-                        ).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                              '$nama siap dipinjam',
-                            ),
-                          ),
-                        );
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                PengajuanPeminjamanPage(
+                                  namaBarang: nama,
+                                  kodeBarang: kode,
+                                ),
+                             ),
+                          );
                       }
                     : null,
 
@@ -258,7 +260,7 @@ class DetailBarangPage extends StatelessWidget {
           ),
         ),
 
-        const SizedBox(width: 15),
+        const SizedBox(width: 15),          
 
         Expanded(
           child: Column(
