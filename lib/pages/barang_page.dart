@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'detail_barang.dart';
 
 class BarangPage extends StatelessWidget {
   const BarangPage({super.key});
@@ -39,111 +40,84 @@ class BarangPage extends StatelessWidget {
       },
     ];
 
-    return Scaffold(
-      backgroundColor: const Color(0xFFF2F4F8),
+    return Column(
+      children: [
+        // BAGIAN PENCARIAN
+        Padding(
+          padding: const EdgeInsets.all(20),
+          child: TextField(
+            decoration: InputDecoration(
+              hintText: 'Cari barang...',
+              prefixIcon: const Icon(
+                Icons.search,
+              ),
+              filled: true,
+              fillColor: Colors.white,
 
-      // APP BAR
-      appBar: AppBar(
-        backgroundColor: const Color(0xFF304B70),
-
-        title: const Text(
-          'Daftar Barang',
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-
-        iconTheme: const IconThemeData(
-          color: Colors.white,
-        ),
-      ),
-
-      // ISI HALAMAN
-      body: Column(
-        children: [
-          // BAGIAN PENCARIAN
-          Padding(
-            padding: const EdgeInsets.all(20),
-
-            child: TextField(
-              decoration: InputDecoration(
-                hintText: 'Cari barang...',
-
-                prefixIcon: const Icon(
-                  Icons.search,
-                ),
-
-                filled: true,
-                fillColor: Colors.white,
-
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(14),
-
-                  borderSide: BorderSide.none,
-                ),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(14),
+                borderSide: BorderSide.none,
               ),
             ),
           ),
+        ),
 
-          // JUMLAH BARANG
-          Padding(
+        // JUDUL DAN JUMLAH BARANG
+        Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 20,
+          ),
+          child: Row(
+            children: [
+              const Text(
+                'Daftar Barang',
+                style: TextStyle(
+                  fontSize: 19,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+
+              const Spacer(),
+
+              Text(
+                '${daftarBarang.length} Barang',
+                style: const TextStyle(
+                  color: Colors.grey,
+                ),
+              ),
+            ],
+          ),
+        ),
+
+        const SizedBox(height: 15),
+
+        // DAFTAR BARANG
+        Expanded(
+          child: ListView.builder(
             padding: const EdgeInsets.symmetric(
               horizontal: 20,
             ),
 
-            child: Row(
-              children: [
-                const Text(
-                  'Barang Tersedia',
-                  style: TextStyle(
-                    fontSize: 19,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+            itemCount: daftarBarang.length,
 
-                const Spacer(),
+            itemBuilder: (context, index) {
+              final barang = daftarBarang[index];
 
-                Text(
-                  '${daftarBarang.length} Barang',
-                  style: const TextStyle(
-                    color: Colors.grey,
-                  ),
-                ),
-              ],
-            ),
+              return _barangCard(
+                context: context,
+                nama: barang['nama']!,
+                kode: barang['kode']!,
+                kondisi: barang['kondisi']!,
+                status: barang['status']!,
+              );
+            },
           ),
-
-          const SizedBox(height: 15),
-
-          // DAFTAR BARANG
-          Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 20,
-              ),
-
-              itemCount: daftarBarang.length,
-
-              itemBuilder: (context, index) {
-                final barang = daftarBarang[index];
-
-                return _barangCard(
-                  context: context,
-                  nama: barang['nama']!,
-                  kode: barang['kode']!,
-                  kondisi: barang['kondisi']!,
-                  status: barang['status']!,
-                );
-              },
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
-  // WIDGET KARTU BARANG
+  // KARTU BARANG
   Widget _barangCard({
     required BuildContext context,
     required String nama,
@@ -151,7 +125,6 @@ class BarangPage extends StatelessWidget {
     required String kondisi,
     required String status,
   }) {
-    // Mengecek apakah barang tersedia
     final bool tersedia = status == 'Tersedia';
 
     return Container(
@@ -191,8 +164,7 @@ class BarangPage extends StatelessWidget {
                 0xFFE7EDF5,
               ),
 
-              borderRadius:
-                  BorderRadius.circular(14),
+              borderRadius: BorderRadius.circular(14),
             ),
 
             child: const Icon(
@@ -220,9 +192,7 @@ class BarangPage extends StatelessWidget {
 
                   style: const TextStyle(
                     fontSize: 17,
-
-                    fontWeight:
-                        FontWeight.bold,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
 
@@ -243,7 +213,6 @@ class BarangPage extends StatelessWidget {
 
                   style: const TextStyle(
                     fontSize: 13,
-
                     color: Colors.grey,
                   ),
                 ),
@@ -264,9 +233,7 @@ class BarangPage extends StatelessWidget {
                         : Colors.red.shade100,
 
                     borderRadius:
-                        BorderRadius.circular(
-                      20,
-                    ),
+                        BorderRadius.circular(20),
                   ),
 
                   child: Text(
@@ -278,9 +245,7 @@ class BarangPage extends StatelessWidget {
                           : Colors.red.shade800,
 
                       fontSize: 12,
-
-                      fontWeight:
-                          FontWeight.bold,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
@@ -291,11 +256,15 @@ class BarangPage extends StatelessWidget {
           // TOMBOL DETAIL
           IconButton(
             onPressed: () {
-              ScaffoldMessenger.of(context)
-                  .showSnackBar(
-                SnackBar(
-                  content: Text(
-                    'Detail $nama belum dibuat',
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>
+                      DetailBarangPage(
+                    nama: nama,
+                    kode: kode,
+                    kondisi: kondisi,
+                    status: status,
                   ),
                 ),
               );
@@ -303,9 +272,7 @@ class BarangPage extends StatelessWidget {
 
             icon: const Icon(
               Icons.arrow_forward_ios,
-
               size: 18,
-
               color: Colors.grey,
             ),
           ),
