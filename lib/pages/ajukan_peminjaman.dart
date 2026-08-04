@@ -1,85 +1,80 @@
 import 'package:flutter/material.dart';
 
-class PengajuanPeminjamanPage extends StatefulWidget {
-  final String namaBarang;
-  final String kodeBarang;
+import '../theme/app_colors.dart';
 
-  const PengajuanPeminjamanPage({
-    super.key,
-    required this.namaBarang,
-    required this.kodeBarang,
-  });
+class AjukanPeminjamanPage extends StatefulWidget {
+  const AjukanPeminjamanPage({super.key});
 
   @override
-  State<PengajuanPeminjamanPage> createState() =>
-      _PengajuanPeminjamanPageState();
+  State<AjukanPeminjamanPage> createState() =>
+      _AjukanPeminjamanPageState();
 }
 
-class _PengajuanPeminjamanPageState
-    extends State<PengajuanPeminjamanPage> {
+class _AjukanPeminjamanPageState
+    extends State<AjukanPeminjamanPage> {
   final _formKey = GlobalKey<FormState>();
 
-  final TextEditingController _keperluanController =
+  final TextEditingController namaController =
       TextEditingController();
 
-  final TextEditingController _catatanController =
+  final TextEditingController keperluanController =
       TextEditingController();
 
-  DateTime? _tanggalPinjam;
-  DateTime? _tanggalKembali;
+  String? perangkatDipilih;
 
-  // MEMILIH TANGGAL PINJAM
-  Future<void> _pilihTanggalPinjam() async {
-    final DateTime? tanggal = await showDatePicker(
+  DateTime? tanggalPinjam;
+  DateTime? tanggalKembali;
+
+  final List<String> daftarPerangkat = [
+    'Handy Talky',
+    'Spectrum Analyzer',
+    'Laptop Monitoring',
+    'Antena Monitoring',
+    'Radio Receiver',
+  ];
+
+  @override
+  void dispose() {
+    namaController.dispose();
+    keperluanController.dispose();
+    super.dispose();
+  }
+
+  Future<void> pilihTanggal({
+    required bool tanggalMulai,
+  }) async {
+    final DateTime sekarang = DateTime.now();
+
+    final DateTime? hasil = await showDatePicker(
       context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime.now(),
-      lastDate: DateTime(2030),
+      initialDate: tanggalMulai
+          ? (tanggalPinjam ?? sekarang)
+          : (tanggalKembali ??
+              tanggalPinjam ??
+              sekarang),
+      firstDate: sekarang,
+      lastDate: DateTime(2035),
     );
 
-    if (tanggal != null) {
-      setState(() {
-        _tanggalPinjam = tanggal;
+    if (hasil == null) return;
 
-        // Menghapus tanggal kembali
-        // jika tanggal pinjam diganti
-        if (_tanggalKembali != null &&
-            _tanggalKembali!.isBefore(tanggal)) {
-          _tanggalKembali = null;
+    setState(() {
+      if (tanggalMulai) {
+        tanggalPinjam = hasil;
+
+        // Jika tanggal kembali lebih awal,
+        // tanggal kembali dihapus.
+        if (tanggalKembali != null &&
+            tanggalKembali!.isBefore(hasil)) {
+          tanggalKembali = null;
         }
-      });
-    }
+      } else {
+        tanggalKembali = hasil;
+      }
+    });
   }
 
-  // MEMILIH TANGGAL PENGEMBALIAN
-  Future<void> _pilihTanggalKembali() async {
-    if (_tanggalPinjam == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            'Pilih tanggal peminjaman terlebih dahulu',
-          ),
-        ),
-      );
-      return;
-    }
-
-    final DateTime? tanggal = await showDatePicker(
-      context: context,
-      initialDate: _tanggalPinjam!,
-      firstDate: _tanggalPinjam!,
-      lastDate: DateTime(2030),
-    );
-
-    if (tanggal != null) {
-      setState(() {
-        _tanggalKembali = tanggal;
-      });
-    }
-  }
-
-  // FORMAT TANGGAL
-  String _formatTanggal(DateTime? tanggal) {
+  String formatTanggal(DateTime? tanggal) {
     if (tanggal == null) {
       return 'Pilih tanggal';
     }
@@ -89,377 +84,507 @@ class _PengajuanPeminjamanPageState
         '${tanggal.year}';
   }
 
-  // KIRIM PENGAJUAN
-  void _kirimPengajuan() {
-    if (!_formKey.currentState!.validate()) {
-      return;
-    }
+  void ajukanPeminjaman() {
+    final bool formValid =
+        _formKey.currentState!.validate();
 
-    if (_tanggalPinjam == null ||
-        _tanggalKembali == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            'Tanggal peminjaman dan pengembalian wajib dipilih',
-          ),
-        ),
+    if (!formValid) return;
+
+    if (perangkatDipilih == null) {
+      tampilkanPesan(
+        'Silakan pilih perangkat',
+        warna: AppColors.warning,
       );
       return;
     }
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        backgroundColor: Colors.green,
-        content: Text(
-          'Pengajuan ${widget.namaBarang} berhasil dikirim',
-        ),
-      ),
-    );
+    if (tanggalPinjam == null) {
+      tampilkanPesan(
+        'Silakan pilih tanggal peminjaman',
+        warna: AppColors.warning,
+      );
+      return;
+    }
 
-    // Nanti data dikirim ke backend di bagian ini
+    if (tanggalKembali == null) {
+      tampilkanPesan(
+        'Silakan pilih tanggal pengembalian',
+        warna: AppColors.warning,
+      );
+      return;
+    }
+
+    if (tanggalKembali!.isBefore(tanggalPinjam!)) {
+      tampilkanPesan(
+        'Tanggal kembali tidak boleh lebih awal',
+        warna: AppColors.danger,
+      );
+      return;
+    }
+
+    tampilkanDialogBerhasil();
   }
 
-  @override
-  void dispose() {
-    _keperluanController.dispose();
-    _catatanController.dispose();
-    super.dispose();
+  void tampilkanPesan(
+    String pesan, {
+    required Color warna,
+  }) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(pesan),
+        backgroundColor: warna,
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
+  }
+
+  void tampilkanDialogBerhasil() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(22),
+          ),
+          title: const Column(
+            children: [
+              CircleAvatar(
+                radius: 30,
+                backgroundColor: Color(0xFFE8F5E9),
+                child: Icon(
+                  Icons.check_rounded,
+                  size: 35,
+                  color: AppColors.success,
+                ),
+              ),
+              SizedBox(height: 14),
+              Text(
+                'Pengajuan Berhasil',
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+          content: const Text(
+            'Permohonan peminjaman berhasil dikirim '
+            'dan sedang menunggu persetujuan.',
+            textAlign: TextAlign.center,
+          ),
+          actions: [
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  Navigator.pop(context);
+                },
+                child: const Text('Kembali'),
+              ),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF2F4F8),
+      backgroundColor: AppColors.background,
 
       appBar: AppBar(
-        backgroundColor: const Color(0xFF304B70),
-
         title: const Text(
           'Ajukan Peminjaman',
           style: TextStyle(
-            color: Colors.white,
             fontWeight: FontWeight.bold,
           ),
         ),
-
-        iconTheme: const IconThemeData(
-          color: Colors.white,
-        ),
+        backgroundColor: AppColors.primary,
+        foregroundColor: Colors.white,
+        elevation: 0,
       ),
 
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
-
+      body: SafeArea(
         child: Form(
           key: _formKey,
 
-          child: Column(
-            crossAxisAlignment:
-                CrossAxisAlignment.start,
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(18),
 
-            children: [
-              // INFORMASI BARANG
-              Container(
-                width: double.infinity,
+            child: Column(
+              crossAxisAlignment:
+                  CrossAxisAlignment.start,
 
-                padding: const EdgeInsets.all(18),
+              children: [
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(18),
 
-                decoration: BoxDecoration(
-                  color: Colors.white,
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(
+                      colors: [
+                        AppColors.primary,
+                        AppColors.primaryLight,
+                      ],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
 
-                  borderRadius:
-                      BorderRadius.circular(16),
+                    borderRadius:
+                        BorderRadius.circular(20),
+                  ),
 
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(
-                        alpha: 0.06,
+                  child: const Row(
+                    children: [
+                      CircleAvatar(
+                        radius: 27,
+                        backgroundColor:
+                            Colors.white24,
+
+                        child: Icon(
+                          Icons.assignment_add,
+                          color: Colors.white,
+                          size: 30,
+                        ),
                       ),
 
-                      blurRadius: 10,
+                      SizedBox(width: 15),
 
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment:
+                              CrossAxisAlignment.start,
+
+                          children: [
+                            Text(
+                              'Form Peminjaman',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 19,
+                                fontWeight:
+                                    FontWeight.bold,
+                              ),
+                            ),
+
+                            SizedBox(height: 4),
+
+                            Text(
+                              'Lengkapi data untuk '
+                              'mengajukan perangkat',
+                              style: TextStyle(
+                                color: Colors.white70,
+                                fontSize: 13,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
 
-                child: Row(
+                const SizedBox(height: 24),
+
+                const Text(
+                  'Data Peminjam',
+                  style: TextStyle(
+                    fontSize: 19,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+
+                const SizedBox(height: 12),
+
+                TextFormField(
+                  controller: namaController,
+
+                  textCapitalization:
+                      TextCapitalization.words,
+
+                  decoration: const InputDecoration(
+                    labelText: 'Nama Peminjam',
+                    hintText:
+                        'Masukkan nama lengkap',
+
+                    prefixIcon: Icon(
+                      Icons.person_outline,
+                    ),
+                  ),
+
+                  validator: (value) {
+                    if (value == null ||
+                        value.trim().isEmpty) {
+                      return 'Nama wajib diisi';
+                    }
+
+                    return null;
+                  },
+                ),
+
+                const SizedBox(height: 22),
+
+                const Text(
+                  'Perangkat',
+                  style: TextStyle(
+                    fontSize: 19,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+
+                const SizedBox(height: 12),
+
+                DropdownButtonFormField<String>(
+                  value: perangkatDipilih,
+
+                  isExpanded: true,
+
+                  decoration: const InputDecoration(
+                    labelText: 'Pilih Perangkat',
+
+                    prefixIcon: Icon(
+                      Icons.devices_other,
+                    ),
+                  ),
+
+                  hint: const Text(
+                    'Pilih perangkat yang dipinjam',
+                  ),
+
+                  items: daftarPerangkat
+                      .map((perangkat) {
+                    return DropdownMenuItem(
+                      value: perangkat,
+                      child: Text(perangkat),
+                    );
+                  }).toList(),
+
+                  onChanged: (value) {
+                    setState(() {
+                      perangkatDipilih = value;
+                    });
+                  },
+                ),
+
+                const SizedBox(height: 22),
+
+                const Text(
+                  'Waktu Peminjaman',
+                  style: TextStyle(
+                    fontSize: 19,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+
+                const SizedBox(height: 12),
+
+                Row(
                   children: [
-                    Container(
-                      width: 55,
-                      height: 55,
-
-                      decoration: BoxDecoration(
-                        color: const Color(
-                          0xFFE7EDF5,
+                    Expanded(
+                      child: _tanggalCard(
+                        judul: 'Tanggal Pinjam',
+                        tanggal:
+                            formatTanggal(
+                          tanggalPinjam,
                         ),
 
-                        borderRadius:
-                            BorderRadius.circular(14),
-                      ),
+                        icon:
+                            Icons.calendar_today,
 
-                      child: const Icon(
-                        Icons.inventory_2_outlined,
-
-                        color: Color(
-                          0xFF304B70,
-                        ),
-
-                        size: 30,
+                        onTap: () {
+                          pilihTanggal(
+                            tanggalMulai: true,
+                          );
+                        },
                       ),
                     ),
 
-                    const SizedBox(width: 15),
+                    const SizedBox(width: 12),
 
                     Expanded(
-                      child: Column(
-                        crossAxisAlignment:
-                            CrossAxisAlignment.start,
+                      child: _tanggalCard(
+                        judul:
+                            'Tanggal Kembali',
 
-                        children: [
-                          Text(
-                            widget.namaBarang,
+                        tanggal:
+                            formatTanggal(
+                          tanggalKembali,
+                        ),
 
-                            style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight:
-                                  FontWeight.bold,
-                            ),
-                          ),
+                        icon:
+                            Icons.event_available,
 
-                          const SizedBox(height: 5),
-
-                          Text(
-                            widget.kodeBarang,
-
-                            style: const TextStyle(
-                              color: Colors.grey,
-                            ),
-                          ),
-                        ],
+                        onTap: () {
+                          pilihTanggal(
+                            tanggalMulai: false,
+                          );
+                        },
                       ),
                     ),
                   ],
                 ),
-              ),
 
-              const SizedBox(height: 25),
+                const SizedBox(height: 22),
 
-              const Text(
-                'Data Peminjaman',
-
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-
-              const SizedBox(height: 15),
-
-              // TANGGAL PINJAM
-              _tanggalButton(
-                judul: 'Tanggal Peminjaman',
-                tanggal: _formatTanggal(
-                  _tanggalPinjam,
-                ),
-                onTap: _pilihTanggalPinjam,
-              ),
-
-              const SizedBox(height: 15),
-
-              // TANGGAL KEMBALI
-              _tanggalButton(
-                judul: 'Tanggal Pengembalian',
-                tanggal: _formatTanggal(
-                  _tanggalKembali,
-                ),
-                onTap: _pilihTanggalKembali,
-              ),
-
-              const SizedBox(height: 15),
-
-              // KEPERLUAN
-              TextFormField(
-                controller: _keperluanController,
-
-                maxLines: 3,
-
-                decoration: InputDecoration(
-                  labelText: 'Keperluan',
-                  hintText:
-                      'Contoh: Kegiatan monitoring',
-
-                  alignLabelWithHint: true,
-
-                  filled: true,
-                  fillColor: Colors.white,
-
-                  border: OutlineInputBorder(
-                    borderRadius:
-                        BorderRadius.circular(14),
+                const Text(
+                  'Keperluan',
+                  style: TextStyle(
+                    fontSize: 19,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textPrimary,
                   ),
                 ),
 
-                validator: (value) {
-                  if (value == null ||
-                      value.trim().isEmpty) {
-                    return 'Keperluan wajib diisi';
-                  }
+                const SizedBox(height: 12),
 
-                  return null;
-                },
-              ),
+                TextFormField(
+                  controller:
+                      keperluanController,
 
-              const SizedBox(height: 15),
+                  minLines: 4,
+                  maxLines: 5,
 
-              // CATATAN
-              TextFormField(
-                controller: _catatanController,
+                  textCapitalization:
+                      TextCapitalization.sentences,
 
-                maxLines: 3,
+                  decoration:
+                      const InputDecoration(
+                    labelText:
+                        'Keperluan Peminjaman',
 
-                decoration: InputDecoration(
-                  labelText:
-                      'Catatan Tambahan (Opsional)',
+                    hintText:
+                        'Contoh: Digunakan untuk '
+                        'kegiatan monitoring '
+                        'frekuensi',
 
-                  hintText:
-                      'Tambahkan catatan jika diperlukan',
+                    alignLabelWithHint: true,
 
-                  alignLabelWithHint: true,
+                    prefixIcon: Padding(
+                      padding:
+                          EdgeInsets.only(
+                        bottom: 70,
+                      ),
 
-                  filled: true,
-                  fillColor: Colors.white,
-
-                  border: OutlineInputBorder(
-                    borderRadius:
-                        BorderRadius.circular(14),
-                  ),
-                ),
-              ),
-
-              const SizedBox(height: 30),
-
-              // TOMBOL KIRIM
-              SizedBox(
-                width: double.infinity,
-                height: 54,
-
-                child: ElevatedButton(
-                  onPressed: _kirimPengajuan,
-
-                  style:
-                      ElevatedButton.styleFrom(
-                    backgroundColor:
-                        const Color(0xFF304B70),
-
-                    foregroundColor:
-                        Colors.white,
-
-                    shape:
-                        RoundedRectangleBorder(
-                      borderRadius:
-                          BorderRadius.circular(
-                        14,
+                      child: Icon(
+                        Icons.description_outlined,
                       ),
                     ),
                   ),
 
-                  child: const Text(
-                    'KIRIM PENGAJUAN',
+                  validator: (value) {
+                    if (value == null ||
+                        value.trim().isEmpty) {
+                      return 'Keperluan wajib diisi';
+                    }
 
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight:
-                          FontWeight.bold,
+                    if (value.trim().length < 10) {
+                      return 'Keperluan minimal '
+                          '10 karakter';
+                    }
+
+                    return null;
+                  },
+                ),
+
+                const SizedBox(height: 28),
+
+                SizedBox(
+                  width: double.infinity,
+                  height: 54,
+
+                  child: ElevatedButton.icon(
+                    onPressed:
+                        ajukanPeminjaman,
+
+                    icon: const Icon(
+                      Icons.send_rounded,
+                    ),
+
+                    label: const Text(
+                      'Ajukan Peminjaman',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight:
+                            FontWeight.bold,
+                      ),
                     ),
                   ),
                 ),
-              ),
 
-              const SizedBox(height: 20),
-            ],
+                const SizedBox(height: 25),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 
-  // WIDGET PILIH TANGGAL
-  Widget _tanggalButton({
+  Widget _tanggalCard({
     required String judul,
     required String tanggal,
+    required IconData icon,
     required VoidCallback onTap,
   }) {
     return InkWell(
       onTap: onTap,
 
       borderRadius:
-          BorderRadius.circular(14),
+          BorderRadius.circular(15),
 
       child: Container(
-        width: double.infinity,
-
         padding:
-            const EdgeInsets.symmetric(
-          horizontal: 16,
-          vertical: 15,
-        ),
+            const EdgeInsets.all(14),
 
         decoration: BoxDecoration(
           color: Colors.white,
 
           borderRadius:
-              BorderRadius.circular(14),
+              BorderRadius.circular(15),
 
           border: Border.all(
-            color: Colors.grey.shade400,
+            color: AppColors.border,
           ),
         ),
 
-        child: Row(
+        child: Column(
+          crossAxisAlignment:
+              CrossAxisAlignment.start,
+
           children: [
-            const Icon(
-              Icons.calendar_month_outlined,
+            Icon(
+              icon,
+              color: AppColors.primary,
+              size: 22,
+            ),
 
-              color: Color(
-                0xFF304B70,
+            const SizedBox(height: 10),
+
+            Text(
+              judul,
+              style: const TextStyle(
+                color:
+                    AppColors.textSecondary,
+                fontSize: 12,
               ),
             ),
 
-            const SizedBox(width: 15),
+            const SizedBox(height: 4),
 
-            Expanded(
-              child: Column(
-                crossAxisAlignment:
-                    CrossAxisAlignment.start,
+            Text(
+              tanggal,
+              maxLines: 1,
 
-                children: [
-                  Text(
-                    judul,
+              overflow:
+                  TextOverflow.ellipsis,
 
-                    style: const TextStyle(
-                      color: Colors.grey,
-                      fontSize: 13,
-                    ),
-                  ),
-
-                  const SizedBox(height: 4),
-
-                  Text(
-                    tanggal,
-
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight:
-                          FontWeight.w600,
-                    ),
-                  ),
-                ],
+              style: const TextStyle(
+                fontWeight:
+                    FontWeight.w600,
+                fontSize: 13,
               ),
-            ),
-
-            const Icon(
-              Icons.arrow_drop_down,
             ),
           ],
         ),

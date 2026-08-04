@@ -1,4 +1,6 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart'; 
+import 'ajukan_peminjaman.dart';
+import 'device_page.dart';
 
 import '../theme/app_colors.dart';
 import '../widgets/custom_button_nav.dart';
@@ -167,8 +169,14 @@ class _DashboardPageState extends State<DashboardPage> {
                       subtitle: "Ajukan perangkat yang dibutuhkan",
 
                       onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const AjukanPeminjamanPage(),
+                          ),
+                        );
+                      }, 
                         // menuju halaman peminjaman
-                      },
                     ),
 
                     MenuCard(
@@ -212,9 +220,26 @@ class _DashboardPageState extends State<DashboardPage> {
         currentIndex: selectedIndex,
 
         onTap: (index) {
-          setState(() {
-            selectedIndex = index;
-          });
+          if (index == 0) {
+            return;
+          }
+
+          if (index == 1) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const DevicePage(),
+                ),
+              );
+            }
+
+          if (index == 2) {
+              // Nanti menuju halaman riwayat
+            }
+
+          if (index == 3) {
+          // Nanti menuju halaman profil
+          }
         },
       ),
     );

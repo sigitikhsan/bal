@@ -200,10 +200,7 @@ class DetailBarangPage extends StatelessWidget {
                             context,
                             MaterialPageRoute(
                                 builder: (context) =>
-                                PengajuanPeminjamanPage(
-                                  namaBarang: nama,
-                                  kodeBarang: kode,
-                                ),
+                                AjukanPeminjamanPage(),
                              ),
                           );
                       }
