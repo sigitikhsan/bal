@@ -20,7 +20,7 @@ class DetailBarangPage extends StatelessWidget {
     final bool tersedia = status == 'Tersedia';
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF2F4F8),
+      backgroundColor: const Color.fromARGB(255, 13, 77, 203),
 
       appBar: AppBar(
         backgroundColor: const Color(0xFF304B70),
