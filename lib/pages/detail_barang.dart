@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'ajukan_peminjaman.dart';
+import 'loan/pemilihan_peminjaman_page.dart';
 
 class DetailBarangPage extends StatelessWidget {
   final String nama;
@@ -200,7 +200,7 @@ class DetailBarangPage extends StatelessWidget {
                             context,
                             MaterialPageRoute(
                                 builder: (context) =>
-                                AjukanPeminjamanPage(),
+                                const PemilihanPeminjamanPage(),
                              ),
                           );
                       }

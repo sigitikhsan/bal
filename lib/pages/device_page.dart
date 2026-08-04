@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../theme/app_colors.dart';
-import 'ajukan_peminjaman.dart';
+import 'detail_barang.dart';
 
 class DevicePage extends StatefulWidget {
   const DevicePage({super.key});
@@ -11,87 +11,74 @@ class DevicePage extends StatefulWidget {
 }
 
 class _DevicePageState extends State<DevicePage> {
-  final TextEditingController searchController =
-      TextEditingController();
+  final TextEditingController searchController = TextEditingController();
 
-  String selectedCategory = 'Semua';
+  String selectedCategory = "Semua";
 
   final List<String> categories = [
-    'Semua',
-    'Radio',
-    'Monitoring',
-    'Komputer',
-    'Antena',
+    "Semua",
+    "Radio",
+    "Monitoring",
+    "Komputer",
+    "Antena",
   ];
 
   final List<Map<String, dynamic>> devices = [
     {
-      'name': 'Handy Talky Motorola',
-      'code': 'HT-001',
-      'category': 'Radio',
-      'status': 'Tersedia',
-      'icon': Icons.radio,
+      "nama": "Laptop Lenovo ThinkPad X1",
+      "kode": "LP001",
+      "kategori": "Komputer",
+      "kondisi": "Baik",
+      "status": "Tersedia",
+      "icon": Icons.laptop_mac,
     },
     {
-      'name': 'Spectrum Analyzer',
-      'code': 'SA-002',
-      'category': 'Monitoring',
-      'status': 'Tersedia',
-      'icon': Icons.graphic_eq,
+      "nama": "Spectrum Analyzer",
+      "kode": "SA002",
+      "kategori": "Monitoring",
+      "kondisi": "Baik",
+      "status": "Dipinjam",
+      "icon": Icons.graphic_eq,
     },
     {
-      'name': 'Laptop Monitoring',
-      'code': 'LP-003',
-      'category': 'Komputer',
-      'status': 'Dipinjam',
-      'icon': Icons.laptop_mac,
+      "nama": "Handy Talky Motorola",
+      "kode": "HT003",
+      "kategori": "Radio",
+      "kondisi": "Baik",
+      "status": "Tersedia",
+      "icon": Icons.radio,
     },
     {
-      'name': 'Antena Monitoring',
-      'code': 'AT-004',
-      'category': 'Antena',
-      'status': 'Tersedia',
-      'icon': Icons.settings_input_antenna,
+      "nama": "Antena Monitoring",
+      "kode": "AT004",
+      "kategori": "Antena",
+      "kondisi": "Baik",
+      "status": "Tersedia",
+      "icon": Icons.settings_input_antenna,
     },
     {
-      'name': 'Radio Receiver',
-      'code': 'RR-005',
-      'category': 'Radio',
-      'status': 'Dipinjam',
-      'icon': Icons.settings_remote,
-    },
-    {
-      'name': 'Portable Receiver',
-      'code': 'PR-006',
-      'category': 'Monitoring',
-      'status': 'Tersedia',
-      'icon': Icons.sensors,
+      "nama": "Laptop Dell Latitude",
+      "kode": "LP005",
+      "kategori": "Komputer",
+      "kondisi": "Rusak Ringan",
+      "status": "Dipinjam",
+      "icon": Icons.laptop,
     },
   ];
 
   List<Map<String, dynamic>> get filteredDevices {
-    final keyword =
-        searchController.text.toLowerCase().trim();
-
     return devices.where((device) {
-      final name =
-          device['name'].toString().toLowerCase();
+      final keyword = searchController.text.toLowerCase();
 
-      final code =
-          device['code'].toString().toLowerCase();
-
-      final category =
-          device['category'].toString();
-
-      final cocokPencarian =
-          name.contains(keyword) ||
-          code.contains(keyword);
+      final cocokCari =
+          device["nama"].toLowerCase().contains(keyword) ||
+          device["kode"].toLowerCase().contains(keyword);
 
       final cocokKategori =
-          selectedCategory == 'Semua' ||
-          category == selectedCategory;
+          selectedCategory == "Semua" ||
+          device["kategori"] == selectedCategory;
 
-      return cocokPencarian && cocokKategori;
+      return cocokCari && cocokKategori;
     }).toList();
   }
 
@@ -101,218 +88,11 @@ class _DevicePageState extends State<DevicePage> {
     super.dispose();
   }
 
-  void bukaDetail(
-    Map<String, dynamic> device,
-  ) {
-    final bool tersedia =
-        device['status'] == 'Tersedia';
-
-    showModalBottomSheet(
-      context: context,
-
-      isScrollControlled: true,
-
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(25),
-        ),
-      ),
-
-      builder: (context) {
-        return Padding(
-          padding: const EdgeInsets.fromLTRB(
-            22,
-            18,
-            22,
-            30,
-          ),
-
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-
-            children: [
-              Container(
-                width: 45,
-                height: 5,
-
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade300,
-
-                  borderRadius:
-                      BorderRadius.circular(20),
-                ),
-              ),
-
-              const SizedBox(height: 22),
-
-              CircleAvatar(
-                radius: 38,
-
-                backgroundColor:
-                    AppColors.primary
-                        .withOpacity(0.12),
-
-                child: Icon(
-                  device['icon'],
-                  size: 40,
-                  color: AppColors.primary,
-                ),
-              ),
-
-              const SizedBox(height: 15),
-
-              Text(
-                device['name'],
-
-                textAlign: TextAlign.center,
-
-                style: const TextStyle(
-                  fontSize: 21,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-
-              const SizedBox(height: 6),
-
-              Text(
-                'Kode: ${device['code']}',
-
-                style: const TextStyle(
-                  color:
-                      AppColors.textSecondary,
-                ),
-              ),
-
-              const SizedBox(height: 20),
-
-              _detailRow(
-                Icons.category_outlined,
-                'Kategori',
-                device['category'],
-              ),
-
-              const SizedBox(height: 12),
-
-              _detailRow(
-                tersedia
-                    ? Icons.check_circle
-                    : Icons.cancel,
-
-                'Status',
-                device['status'],
-
-                color: tersedia
-                    ? AppColors.success
-                    : AppColors.danger,
-              ),
-
-              const SizedBox(height: 25),
-
-              if (tersedia)
-                SizedBox(
-                  width: double.infinity,
-                  height: 52,
-
-                  child: ElevatedButton.icon(
-                    onPressed: () {
-                      Navigator.pop(context);
-
-                      Navigator.push(
-                        context,
-
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              const AjukanPeminjamanPage(),
-                        ),
-                      );
-                    },
-
-                    icon: const Icon(
-                      Icons.assignment_add,
-                    ),
-
-                    label: const Text(
-                      'Ajukan Peminjaman',
-                    ),
-                  ),
-                )
-              else
-                Container(
-                  width: double.infinity,
-
-                  padding:
-                      const EdgeInsets.all(15),
-
-                  decoration: BoxDecoration(
-                    color: const Color(
-                      0xFFFFEBEE,
-                    ),
-
-                    borderRadius:
-                        BorderRadius.circular(14),
-                  ),
-
-                  child: const Row(
-                    children: [
-                      Icon(
-                        Icons.info_outline,
-                        color: AppColors.danger,
-                      ),
-
-                      SizedBox(width: 10),
-
-                      Expanded(
-                        child: Text(
-                          'Perangkat sedang '
-                          'dipinjam dan belum '
-                          'tersedia.',
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-            ],
-          ),
-        );
-      },
+  Future<void> refreshData() async {
+    await Future.delayed(
+      const Duration(seconds: 1),
     );
-  }
-
-  Widget _detailRow(
-    IconData icon,
-    String title,
-    String value, {
-    Color? color,
-  }) {
-    return Row(
-      children: [
-        Icon(
-          icon,
-          color: color ?? AppColors.primary,
-        ),
-
-        const SizedBox(width: 12),
-
-        Text(
-          '$title:',
-          style: const TextStyle(
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-
-        const Spacer(),
-
-        Text(
-          value,
-          style: TextStyle(
-            color:
-                color ?? AppColors.textPrimary,
-
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-      ],
-    );
+    setState(() {});
   }
 
   @override
@@ -320,423 +100,276 @@ class _DevicePageState extends State<DevicePage> {
     final hasil = filteredDevices;
 
     return Scaffold(
-      backgroundColor:
-          AppColors.background,
-
+      backgroundColor: AppColors.background,
       appBar: AppBar(
+        backgroundColor: AppColors.primary,
+        foregroundColor: Colors.white,
+        elevation: 0,
         title: const Text(
-          'Daftar Perangkat',
+          "Daftar Perangkat",
           style: TextStyle(
             fontWeight: FontWeight.bold,
           ),
         ),
-
-        backgroundColor:
-            AppColors.primary,
-
-        foregroundColor:
-            Colors.white,
-
-        elevation: 0,
       ),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: AppColors.primary,
+        child: const Icon(Icons.refresh),
+        onPressed: () {
+          setState(() {});
+        },
+      ),
+      body: RefreshIndicator(
+        onRefresh: refreshData,
+        child: Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.fromLTRB(
+                18,
+                15,
+                18,
+                20,
+              ),
+              decoration: const BoxDecoration(
+                color: AppColors.primary,
+                borderRadius: BorderRadius.vertical(
+                  bottom: Radius.circular(25),
+                ),
+              ),
+              child: Column(
+                children: [
+                  TextField(
+                    controller: searchController,
+                    onChanged: (value) {
+                      setState(() {});
+                    },
+                    decoration: InputDecoration(
+                      hintText: "Cari nama atau kode perangkat",
+                      prefixIcon: const Icon(Icons.search),
+                      suffixIcon: searchController.text.isNotEmpty
+                          ? IconButton(
+                              icon: const Icon(Icons.clear),
+                              onPressed: () {
+                                searchController.clear();
+                                setState(() {});
+                              },
+                            )
+                          : null,
+                      filled: true,
+                      fillColor: Colors.white,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(15),
+                        borderSide: BorderSide.none,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 15),
+                  SizedBox(
+                    height: 40,
+                    child: ListView.separated(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: categories.length,
+                      separatorBuilder: (_, __) =>
+                          const SizedBox(width: 8),
+                      itemBuilder: (_, index) {
+                        final category = categories[index];
 
-      body: Column(
-        children: [
-          Container(
-            padding: const EdgeInsets.fromLTRB(
-              18,
-              12,
-              18,
-              20,
-            ),
-
-            decoration: const BoxDecoration(
-              color: AppColors.primary,
-
-              borderRadius:
-                  BorderRadius.vertical(
-                bottom: Radius.circular(25),
+                        return ChoiceChip(
+                          label: Text(category),
+                          selected: selectedCategory == category,
+                          selectedColor: Colors.white,
+                          backgroundColor: Colors.white24,
+                          labelStyle: TextStyle(
+                            color: selectedCategory == category
+                                ? AppColors.primary
+                                : Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          onSelected: (_) {
+                            setState(() {
+                              selectedCategory = category;
+                            });
+                          },
+                        );
+                      },
+                    ),
+                  ),
+                ],
               ),
             ),
-
-            child: Column(
-              children: [
-                TextField(
-                  controller:
-                      searchController,
-
-                  onChanged: (value) {
-                    setState(() {});
-                  },
-
-                  decoration:
-                      InputDecoration(
-                    hintText:
-                        'Cari nama atau kode perangkat',
-
-                    prefixIcon: const Icon(
-                      Icons.search,
+            Padding(
+              padding: const EdgeInsets.fromLTRB(
+                18,
+                18,
+                18,
+                10,
+              ),
+              child: Row(
+                children: [
+                  const Text(
+                    "Daftar Perangkat",
+                    style: TextStyle(
+                      fontSize: 19,
+                      fontWeight: FontWeight.bold,
                     ),
-
-                    suffixIcon:
-                        searchController
-                                .text
-                                .isNotEmpty
-                            ? IconButton(
-                                icon: const Icon(
-                                  Icons.clear,
-                                ),
-
-                                onPressed: () {
-                                  searchController
-                                      .clear();
-
-                                  setState(() {});
-                                },
-                              )
-                            : null,
-
-                    filled: true,
-
-                    fillColor:
-                        Colors.white,
-
-                    border:
-                        OutlineInputBorder(
-                      borderRadius:
-                          BorderRadius.circular(
-                        15,
+                  ),
+                  const Spacer(),
+                  Text(
+                    "${hasil.length} perangkat",
+                    style: const TextStyle(
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Expanded(
+              child: hasil.isEmpty
+                  ? const Center(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.search_off,
+                            size: 70,
+                            color: Colors.grey,
+                          ),
+                          SizedBox(height: 15),
+                          Text(
+                            "Perangkat tidak ditemukan",
+                          ),
+                        ],
                       ),
+                    )
+                  : ListView.builder(
+                      padding: const EdgeInsets.fromLTRB(
+                        18,
+                        0,
+                        18,
+                        25,
+                      ),
+                      itemCount: hasil.length,
+                      itemBuilder: (context, index) {
+                        final item = hasil[index];
 
-                      borderSide:
-                          BorderSide.none,
-                    ),
-                  ),
-                ),
+                        final tersedia =
+                            item["status"] == "Tersedia";
 
-                const SizedBox(height: 15),
-
-                SizedBox(
-                  height: 38,
-
-                  child: ListView.separated(
-                    scrollDirection:
-                        Axis.horizontal,
-
-                    itemCount:
-                        categories.length,
-
-                    separatorBuilder:
-                        (context, index) {
-                      return const SizedBox(
-                        width: 9,
-                      );
-                    },
-
-                    itemBuilder:
-                        (context, index) {
-                      final category =
-                          categories[index];
-
-                      final selected =
-                          selectedCategory ==
-                              category;
-
-                      return ChoiceChip(
-                        label: Text(
-                          category,
-                        ),
-
-                        selected: selected,
-
-                        selectedColor:
-                            Colors.white,
-
-                        backgroundColor:
-                            Colors.white24,
-
-                        labelStyle:
-                            TextStyle(
-                          color: selected
-                              ? AppColors.primary
-                              : Colors.white,
-
-                          fontWeight:
-                              FontWeight.w600,
-                        ),
-
-                        onSelected:
-                            (value) {
-                          setState(() {
-                            selectedCategory =
-                                category;
-                          });
-                        },
-                      );
-                    },
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          Padding(
-            padding:
-                const EdgeInsets.fromLTRB(
-              18,
-              20,
-              18,
-              10,
-            ),
-
-            child: Row(
-              children: [
-                const Text(
-                  'Perangkat Tersedia',
-
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight:
-                        FontWeight.bold,
-                  ),
-                ),
-
-                const Spacer(),
-
-                Text(
-                  '${hasil.length} perangkat',
-
-                  style: const TextStyle(
-                    color:
-                        AppColors.textSecondary,
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          Expanded(
-            child: hasil.isEmpty
-                ? const Center(
-                    child: Column(
-                      mainAxisSize:
-                          MainAxisSize.min,
-
-                      children: [
-                        Icon(
-                          Icons.search_off,
-                          size: 65,
-                          color: Colors.grey,
-                        ),
-
-                        SizedBox(height: 12),
-
-                        Text(
-                          'Perangkat tidak ditemukan',
-                        ),
-                      ],
-                    ),
-                  )
-
-                : ListView.builder(
-                    padding:
-                        const EdgeInsets.fromLTRB(
-                      18,
-                      5,
-                      18,
-                      25,
-                    ),
-
-                    itemCount:
-                        hasil.length,
-
-                    itemBuilder:
-                        (context, index) {
-                      final device =
-                          hasil[index];
-
-                      final tersedia =
-                          device['status'] ==
-                              'Tersedia';
-
-                      return Card(
-                        margin:
-                            const EdgeInsets.only(
-                          bottom: 13,
-                        ),
-
-                        child: InkWell(
-                          borderRadius:
-                              BorderRadius.circular(
-                            18,
+                        return Card(
+                          margin: const EdgeInsets.only(
+                            bottom: 15,
                           ),
-
-                          onTap: () {
-                            bukaDetail(
-                              device,
-                            );
-                          },
-
-                          child: Padding(
-                            padding:
-                                const EdgeInsets.all(
-                              15,
-                            ),
-
-                            child: Row(
-                              children: [
-                                Container(
-                                  width: 55,
-                                  height: 55,
-
-                                  decoration:
-                                      BoxDecoration(
-                                    color:
-                                        AppColors
-                                            .primary
-                                            .withOpacity(
-                                      0.10,
-                                    ),
-
-                                    borderRadius:
-                                        BorderRadius
-                                            .circular(
-                                      15,
-                                    ),
-                                  ),
-
-                                  child: Icon(
-                                    device['icon'],
-
-                                    color:
-                                        AppColors
-                                            .primary,
-
-                                    size: 29,
+                          elevation: 2,
+                          shape: RoundedRectangleBorder(
+                            borderRadius:
+                                BorderRadius.circular(18),
+                          ),
+                          child: InkWell(
+                            borderRadius:
+                                BorderRadius.circular(18),
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => DetailBarangPage(
+                                    nama: item["nama"],
+                                    kode: item["kode"],
+                                    kondisi: item["kondisi"],
+                                    status: item["status"],
                                   ),
                                 ),
-
-                                const SizedBox(
-                                  width: 14,
-                                ),
-
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment
-                                            .start,
-
-                                    children: [
-                                      Text(
-                                        device[
-                                            'name'],
-
-                                        maxLines: 1,
-
-                                        overflow:
-                                            TextOverflow
-                                                .ellipsis,
-
-                                        style:
-                                            const TextStyle(
-                                          fontSize: 16,
-                                          fontWeight:
-                                              FontWeight
-                                                  .bold,
-                                        ),
-                                      ),
-
-                                      const SizedBox(
-                                        height: 4,
-                                      ),
-
-                                      Text(
-                                        '${device['code']} • ${device['category']}',
-
-                                        style:
-                                            const TextStyle(
-                                          color:
-                                              AppColors
-                                                  .textSecondary,
-
-                                          fontSize: 12,
-                                        ),
-                                      ),
-
-                                      const SizedBox(
-                                        height: 8,
-                                      ),
-
-                                      Container(
-                                        padding:
-                                            const EdgeInsets
-                                                .symmetric(
-                                          horizontal:
-                                              9,
-
-                                          vertical: 4,
-                                        ),
-
-                                        decoration:
-                                            BoxDecoration(
-                                          color: tersedia
-                                              ? const Color(
-                                                  0xFFE8F5E9,
-                                                )
-                                              : const Color(
-                                                  0xFFFFEBEE,
-                                                ),
-
-                                          borderRadius:
-                                              BorderRadius
-                                                  .circular(
-                                            20,
-                                          ),
-                                        ),
-
-                                        child: Text(
-                                          device[
-                                              'status'],
-
-                                          style:
-                                              TextStyle(
-                                            color: tersedia
-                                                ? AppColors
-                                                    .success
-                                                : AppColors
-                                                    .danger,
-
-                                            fontSize:
-                                                11,
-
+                              );
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.all(15),
+                              child: Row(
+                                children: [
+                                  Container(
+                                    width: 58,
+                                    height: 58,
+                                    decoration: BoxDecoration(
+                                      color: AppColors.primary
+                                          .withOpacity(0.12),
+                                      borderRadius:
+                                          BorderRadius.circular(15),
+                                    ),
+                                    child: Icon(
+                                      item["icon"],
+                                      color: AppColors.primary,
+                                      size: 30,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 15),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          item["nama"],
+                                          style: const TextStyle(
+                                            fontSize: 16,
                                             fontWeight:
-                                                FontWeight
-                                                    .bold,
+                                                FontWeight.bold,
                                           ),
                                         ),
-                                      ),
-                                    ],
+                                        const SizedBox(height: 5),
+                                        Text(
+                                          "${item["kode"]} • ${item["kategori"]}",
+                                          style: const TextStyle(
+                                            color: AppColors
+                                                .textSecondary,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 8),
+                                        Container(
+                                          padding:
+                                              const EdgeInsets
+                                                  .symmetric(
+                                            horizontal: 10,
+                                            vertical: 5,
+                                          ),
+                                          decoration:
+                                              BoxDecoration(
+                                            color: tersedia
+                                                ? Colors.green
+                                                    .shade100
+                                                : Colors.red
+                                                    .shade100,
+                                            borderRadius:
+                                                BorderRadius
+                                                    .circular(20),
+                                          ),
+                                          child: Text(
+                                            item["status"],
+                                            style: TextStyle(
+                                              color: tersedia
+                                                  ? Colors.green
+                                                  : Colors.red,
+                                              fontWeight:
+                                                  FontWeight.bold,
+                                              fontSize: 12,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                ),
-
-                                const Icon(
-                                  Icons
-                                      .arrow_forward_ios_rounded,
-
-                                  size: 17,
-
-                                  color:
-                                      Colors.grey,
-                                ),
-                              ],
+                                  const Icon(
+                                    Icons.arrow_forward_ios,
+                                    size: 16,
+                                    color: Colors.grey,
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                      );
-                    },
-                  ),
-          ),
-        ],
+                        );
+                      },
+                    ),
+            ),
+          ],
+        ),
       ),
     );
   }

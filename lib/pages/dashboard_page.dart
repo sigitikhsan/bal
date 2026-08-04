@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart'; 
-import 'ajukan_peminjaman.dart';
 import 'device_page.dart';
+import 'loan/pemilihan_peminjaman_page.dart';
+import 'status/status_page.dart';
+import 'history/history_page.dart';
+import 'return/pengembalian_page.dart';
 
 import '../theme/app_colors.dart';
 import '../widgets/custom_button_nav.dart';
@@ -172,7 +175,7 @@ class _DashboardPageState extends State<DashboardPage> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => const AjukanPeminjamanPage(),
+                            builder: (context) => const PemilihanPeminjamanPage(),
                           ),
                         );
                       }, 
@@ -186,7 +189,14 @@ class _DashboardPageState extends State<DashboardPage> {
 
                       subtitle: "Lihat status permohonan",
 
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const StatusPage(),
+                          ),
+                        );
+                      },
                     ),
 
                     MenuCard(
@@ -196,7 +206,14 @@ class _DashboardPageState extends State<DashboardPage> {
 
                       subtitle: "Riwayat peminjaman perangkat",
 
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const HistoryPage(),
+                          ),
+                        );
+                      },
                     ),
 
                     MenuCard(
@@ -206,7 +223,14 @@ class _DashboardPageState extends State<DashboardPage> {
 
                       subtitle: "Kembalikan perangkat",
 
-                      onTap: () {},
+                      onTap: () {
+                         Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const ReturnPage(),
+                          ),
+                        );
+                      },
                     ),
                   ],
                 ),
