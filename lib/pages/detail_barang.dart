@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'pengajuan_peminjaman_page.dart';
+import 'ajukan_peminjaman.dart';
 
 class DetailBarangPage extends StatelessWidget {
   final String nama;

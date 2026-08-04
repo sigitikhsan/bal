@@ -1,18 +1,23 @@
 import 'package:flutter/material.dart';
-import 'pages/welcome_page.dart';
+import 'theme/app_theme.dart';
+import 'pages/splash_screen.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const BalmonApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class BalmonApp extends StatelessWidget {
+  const BalmonApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: WelcomePage(),
+      title: 'Balmon',
+
+      theme: AppTheme.lightTheme,
+
+      home: const SplashScreen(),
     );
   }
 }

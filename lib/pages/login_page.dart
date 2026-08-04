@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'register_page.dart';
-import 'user_home_page.dart';
+import 'dashboard_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -10,273 +9,193 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  // Controller untuk mengambil isi input
-  final usernameController = TextEditingController();
-  final passwordController = TextEditingController();
+  // 1. Kunci unik untuk mengontrol status validasi Form
+  final _formKey = GlobalKey<FormState>();
 
-  // Untuk menampilkan atau menyembunyikan password
-  bool passwordTersembunyi = true;
+  bool remember = false;
+  bool hidePassword = true;
 
-  var isLoading = false;
+  final username = TextEditingController();
+  final password = TextEditingController();
+
   @override
   void dispose() {
-    usernameController.dispose();
-    passwordController.dispose();
+    username.dispose();
+    password.dispose();
     super.dispose();
-  }
-
-  void login() {
-    String username = usernameController.text;
-    String password = passwordController.text;
-
-    // Validasi sementara di frontend
-    if (username.isEmpty || password.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            'Username dan password harus diisi',
-          ),
-        ),
-      );
-      return;
-    } 
-     Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => 
-          const UserHomePage(),
-          ),
-     );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF2F4F8),
-
-      appBar: AppBar(
-        backgroundColor: const Color(0xFF304B70),
-
-        title: const Text(
-          'Login SIMBA',
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-
-        iconTheme: const IconThemeData(
-          color: Colors.white,
-        ),
-      ),
-
+      backgroundColor: Colors.white,
       body: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(24),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(24),
+          // 2. Bungkus seluruh kolom input dengan widget Form
+          child: Form(
+            key: _formKey,
+            child: Column(
+              children: [
+                const SizedBox(height: 50),
 
-            child: Container(
-              width: double.infinity,
-
-              padding: const EdgeInsets.all(28),
-
-              decoration: BoxDecoration(
-                color: Colors.white,
-
-                borderRadius: BorderRadius.circular(25),
-
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(
-                      alpha: 0.1,
-                    ),
-                    blurRadius: 15,
-                    offset: const Offset(0, 5),
+                Container(
+                  width: 90,
+                  height: 90,
+                  decoration: BoxDecoration(
+                    color: Colors.blue.shade700,
+                    borderRadius: BorderRadius.circular(20),
                   ),
-                ],
-              ),
+                  child: const Icon(Icons.shield, color: Colors.white, size: 45),
+                ),
 
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
+                const SizedBox(height: 25),
 
-                children: [
-                  const Icon(
-                    Icons.account_circle_outlined,
-                    size: 90,
-                    color: Color(0xFF304B70),
-                  ),
+                const Text(
+                  "Selamat Datang!",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 27),
+                ),
 
-                  const SizedBox(height: 15),
+                const SizedBox(height: 8),
 
-                  const Text(
-                    'Selamat Datang',
-                    style: TextStyle(
-                      fontSize: 28,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+                const Text(
+                  "Silakan masuk untuk melanjutkan",
+                  style: TextStyle(color: Colors.grey),
+                ),
 
-                  const SizedBox(height: 8),
+                const SizedBox(height: 35),
 
-                  const Text(
-                    'Silakan masuk ke akun Anda',
-                    style: TextStyle(
-                      color: Colors.grey,
-                      fontSize: 16,
+                // 3. Ubah TextField menjadi TextFormField + Tambah Validator Username
+                TextFormField(
+                  controller: username,
+                  decoration: InputDecoration(
+                    hintText: "NIP / Username",
+                    prefixIcon: const Icon(Icons.person),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
                     ),
                   ),
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return 'Username tidak boleh kosong';
+                    }
+                    return null;
+                  },
+                ),
 
-                  const SizedBox(height: 30),
+                const SizedBox(height: 18),
 
-                  TextField(
-                    controller: usernameController,
-
-                    decoration: InputDecoration(
-                      labelText: 'Username',
-
-                      prefixIcon: const Icon(
-                        Icons.person_outline,
-                      ),
-
-                      border: OutlineInputBorder(
-                        borderRadius:
-                            BorderRadius.circular(12),
-                      ),
-                    ),
-                  ),
-
-                  const SizedBox(height: 18),
-
-                  TextField(
-                    controller: passwordController,
-
-                    obscureText: passwordTersembunyi,
-
-                    decoration: InputDecoration(
-                      labelText: 'Password',
-
-                      prefixIcon: const Icon(
-                        Icons.lock_outline,
-                      ),
-
-                      suffixIcon: IconButton(
-                        onPressed: () {
-                          setState(() {
-                            passwordTersembunyi =
-                                !passwordTersembunyi;
-                          });
-                        },
-
-                        icon: Icon(
-                          passwordTersembunyi
-                              ? Icons.visibility_off
-                              : Icons.visibility,
-                        ),
-                      ),
-
-                      border: OutlineInputBorder(
-                        borderRadius:
-                            BorderRadius.circular(12),
-                      ),
-                    ),
-                  ),
-
-                  const SizedBox(height: 12),
-
-                  Align(
-                    alignment: Alignment.centerRight,
-
-                    child: TextButton(
+                // 4. Ubah TextField menjadi TextFormField + Tambah Validator Password
+                TextFormField(
+                  controller: password,
+                  obscureText: hidePassword,
+                  decoration: InputDecoration(
+                    hintText: "Password",
+                    prefixIcon: const Icon(Icons.lock),
+                    suffixIcon: IconButton(
                       onPressed: () {
-                        ScaffoldMessenger.of(context)
-                            .showSnackBar(
-                          const SnackBar(
-                            content: Text(
-                              'Fitur lupa password belum dibuat',
-                            ),
+                        setState(() {
+                          hidePassword = !hidePassword;
+                        });
+                      },
+                      icon: Icon(
+                        hidePassword ? Icons.visibility_off : Icons.visibility,
+                      ),
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return 'Password tidak boleh kosong';
+                    }
+                    if (value.length < 6) {
+                      return 'Password minimal 6 karakter';
+                    }
+                    return null;
+                  },
+                ),
+
+                const SizedBox(height: 15),
+
+                Row(
+                  children: [
+                    Checkbox(
+                      value: remember,
+                      onChanged: (v) {
+                        setState(() {
+                          remember = v!;
+                        });
+                      },
+                    ),
+                    const Text("Ingat saya"),
+                    const Spacer(),
+                    TextButton(
+                      onPressed: () {},
+                      child: const Text("Lupa Password?"),
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 15),
+
+                SizedBox(
+                  width: double.infinity,
+                  height: 50,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue.shade700,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    onPressed: () {
+                      // 5. Cek validasi sebelum pindah halaman
+                      if (_formKey.currentState!.validate()) {
+                        // Jika semua input valid, baru pindah ke halaman utama
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const DashboardPage(),
                           ),
                         );
-                      },
-
-                      child: const Text(
-                        'Lupa Password?',
-                        style: TextStyle(
-                          color: Color(0xFF304B70),
-                        ),
-                      ),
+                      }
+                    },
+                    child: const Text(
+                      "Masuk",
+                      style: TextStyle(color: Colors.white),
                     ),
                   ),
+                ),
 
-                  const SizedBox(height: 15),
+                const SizedBox(height: 20),
 
-                  SizedBox(
-                    width: double.infinity,
-                    height: 52,
+                const Text(
+                  "atau masuk dengan",
+                  style: TextStyle(color: Colors.grey),
+                ),
 
-                    child: ElevatedButton(
-                      onPressed: login,
+                const SizedBox(height: 20),
 
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor:
-                            const Color(0xFF304B70),
-
-                        foregroundColor:
-                            Colors.white,
-
-                        shape:
-                            RoundedRectangleBorder(
-                          borderRadius:
-                              BorderRadius.circular(14),
-                        ),
-                      ),
-
-                      child: const Text(
-                        'LOGIN',
-                        style: TextStyle(
-                          fontSize: 17,
-                          fontWeight:
-                              FontWeight.bold,
-                        ),
-                      ),
-                    ),
+                SizedBox(
+                  width: double.infinity,
+                  height: 50,
+                  child: OutlinedButton(
+                    onPressed: () {},
+                    child: const Text("SSO Balmon"),
                   ),
+                ),
 
-                  const SizedBox(height: 20),
+                const SizedBox(height: 40),
 
-                  Row(
-                    mainAxisAlignment:
-                        MainAxisAlignment.center,
+                const Text(
+                  "Belum punya akun?",
+                  style: TextStyle(color: Colors.grey),
+                ),
 
-                    children: [
-                      const Text(
-                        'Belum punya akun?',
-                      ),
-
-                      TextButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const RegisterPage(),
-                            ),
-                          );
-                        },
-
-                        child: const Text(
-                          'Daftar Sekarang',
-                          style: TextStyle(
-                            color:
-                                Color(0xFF304B70),
-
-                            fontWeight:
-                                FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+                TextButton(onPressed: () {}, child: const Text("Hubungi Admin")),
+              ],
             ),
           ),
         ),
