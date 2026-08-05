@@ -71,7 +71,7 @@ class _DashboardPageState extends State<DashboardPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: const [
                     Text(
-                      "Halo, Andi Pratama 👋",
+                      "Halo, Andi Pratama ",
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 18,

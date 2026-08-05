@@ -40,14 +40,15 @@ class _LoginPageState extends State<LoginPage> {
               children: [
                 const SizedBox(height: 50),
 
+                // FITUR LOGO IMAGE (Diubah dari Icon menjadi Image.asset)
                 Container(
-                  width: 90,
-                  height: 90,
-                  decoration: BoxDecoration(
-                    color: Colors.blue.shade700,
-                    borderRadius: BorderRadius.circular(20),
+                  width: 130,
+                  height: 130,
+                  padding: const EdgeInsets.all(12),
+                  child: Image.asset(
+                    'assets/images/lo_screen.png', // Ganti sesuai nama file logo Anda
+                    fit: BoxFit.contain,
                   ),
-                  child: const Icon(Icons.shield, color: Colors.white, size: 45),
                 ),
 
                 const SizedBox(height: 25),
@@ -66,7 +67,7 @@ class _LoginPageState extends State<LoginPage> {
 
                 const SizedBox(height: 35),
 
-                // 3. Ubah TextField menjadi TextFormField + Tambah Validator Username
+                // 3. TextFormField Username
                 TextFormField(
                   controller: username,
                   decoration: InputDecoration(
@@ -86,7 +87,7 @@ class _LoginPageState extends State<LoginPage> {
 
                 const SizedBox(height: 18),
 
-                // 4. Ubah TextField menjadi TextFormField + Tambah Validator Password
+                // 4. TextFormField Password
                 TextFormField(
                   controller: password,
                   obscureText: hidePassword,
@@ -154,7 +155,6 @@ class _LoginPageState extends State<LoginPage> {
                     onPressed: () {
                       // Cek apakah input sudah valid
                       if (_formKey.currentState!.validate()) {
-                        // Ambil username dan password
                         final inputUsername = username.text.trim();
                         final inputPassword = password.text.trim();
 
@@ -213,7 +213,10 @@ class _LoginPageState extends State<LoginPage> {
                   style: TextStyle(color: Colors.grey),
                 ),
 
-                TextButton(onPressed: () {}, child: const Text("Hubungi Admin")),
+                TextButton(
+                  onPressed: () {},
+                  child: const Text("Hubungi Admin"),
+                ),
               ],
             ),
           ),

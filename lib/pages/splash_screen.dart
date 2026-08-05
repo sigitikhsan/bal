@@ -73,14 +73,12 @@ class _SplashScreenState extends State<SplashScreen>
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  FadeTransition(
-                    opacity: animation,
-                    child: const Icon(
-                      Icons.shield,
-                      color: Colors.white,
-                      size: 90,
-                    ),
+                  // FITUR LOGO IMAGE (Dengan Efek Animasi)
+                  CircleAvatar(
+                    radius: 60, // Setengah dari lebar yang diinginkan (120 / 2)
+                    backgroundImage: AssetImage('assets/images/logo_apk.png'),
                   ),
+
 
                   const SizedBox(height: 20),
 
