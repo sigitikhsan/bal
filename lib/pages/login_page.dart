@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dashboard_page.dart';
+import '../admin/dashboard/admin_dashboard.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -151,15 +152,33 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                     onPressed: () {
-                      // 5. Cek validasi sebelum pindah halaman
+                      // Cek apakah input sudah valid
                       if (_formKey.currentState!.validate()) {
-                        // Jika semua input valid, baru pindah ke halaman utama
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const DashboardPage(),
-                          ),
-                        );
+                        // Ambil username dan password
+                        final inputUsername = username.text.trim();
+                        final inputPassword = password.text.trim();
+
+                        // Jika username admin dan password 123456
+                        if (inputUsername == 'admin' &&
+                            inputPassword == '123456') {
+                          // Masuk ke Dashboard Admin
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  const AdminDashboardPage(),
+                            ),
+                          );
+                        } else {
+                          // Selain akun admin masuk ke Dashboard User
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  const DashboardPage(),
+                            ),
+                          );
+                        }
                       }
                     },
                     child: const Text(
