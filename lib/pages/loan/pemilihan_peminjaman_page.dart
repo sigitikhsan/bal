@@ -6,7 +6,8 @@ class PemilihanPeminjamanPage extends StatefulWidget {
   const PemilihanPeminjamanPage({super.key});
 
   @override
-  State<PemilihanPeminjamanPage> createState() => _PemilihanPeminjamanPageState();
+  State<PemilihanPeminjamanPage> createState() =>
+      _PemilihanPeminjamanPageState();
 }
 
 class _PemilihanPeminjamanPageState extends State<PemilihanPeminjamanPage> {
@@ -14,12 +15,7 @@ class _PemilihanPeminjamanPageState extends State<PemilihanPeminjamanPage> {
 
   String selectedCategory = "Semua";
 
-  final List<String> categories = [
-    "Semua",
-    "Radio",
-    "Laptop",
-    "Monitoring",
-  ];
+  final List<String> categories = ["Semua", "Radio", "Laptop", "Monitoring"];
 
   final List<Map<String, dynamic>> devices = [
     {
@@ -56,12 +52,10 @@ class _PemilihanPeminjamanPageState extends State<PemilihanPeminjamanPage> {
     return devices.where((device) {
       final keyword = searchController.text.toLowerCase();
 
-      final cocokNama =
-          device["name"].toLowerCase().contains(keyword);
+      final cocokNama = device["name"].toLowerCase().contains(keyword);
 
       final cocokKategori =
-          selectedCategory == "Semua" ||
-              device["category"] == selectedCategory;
+          selectedCategory == "Semua" || device["category"] == selectedCategory;
 
       return cocokNama && cocokKategori;
     }).toList();
@@ -83,7 +77,6 @@ class _PemilihanPeminjamanPageState extends State<PemilihanPeminjamanPage> {
 
       body: Column(
         children: [
-
           Padding(
             padding: const EdgeInsets.all(16),
 
@@ -112,10 +105,7 @@ class _PemilihanPeminjamanPageState extends State<PemilihanPeminjamanPage> {
               alignment: Alignment.centerLeft,
               child: Text(
                 "Kategori",
-                style: TextStyle(
-                  fontSize: 17,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
               ),
             ),
           ),
@@ -135,8 +125,7 @@ class _PemilihanPeminjamanPageState extends State<PemilihanPeminjamanPage> {
               itemBuilder: (context, index) {
                 final category = categories[index];
 
-                final selected =
-                    selectedCategory == category;
+                final selected = selectedCategory == category;
 
                 return Padding(
                   padding: const EdgeInsets.only(right: 8),
@@ -149,9 +138,7 @@ class _PemilihanPeminjamanPageState extends State<PemilihanPeminjamanPage> {
                     selectedColor: AppColors.primary,
 
                     labelStyle: TextStyle(
-                      color: selected
-                          ? Colors.white
-                          : Colors.black,
+                      color: selected ? Colors.white : Colors.black,
                     ),
 
                     onSelected: (_) {
@@ -174,11 +161,9 @@ class _PemilihanPeminjamanPageState extends State<PemilihanPeminjamanPage> {
               itemCount: hasil.length,
 
               itemBuilder: (context, index) {
-
                 final item = hasil[index];
 
-                final tersedia =
-                    item["status"] == "Tersedia";
+                final tersedia = item["status"] == "Tersedia";
 
                 return Card(
                   margin: const EdgeInsets.only(bottom: 15),
@@ -186,28 +171,24 @@ class _PemilihanPeminjamanPageState extends State<PemilihanPeminjamanPage> {
                   elevation: 2,
 
                   shape: RoundedRectangleBorder(
-                    borderRadius:
-                        BorderRadius.circular(18),
+                    borderRadius: BorderRadius.circular(18),
                   ),
 
                   child: Padding(
                     padding: const EdgeInsets.all(16),
 
                     child: Column(
-                      crossAxisAlignment:
-                          CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
 
                       children: [
-
                         Row(
                           children: [
-
                             CircleAvatar(
                               radius: 24,
 
-                              backgroundColor:
-                                  AppColors.primary
-                                      .withOpacity(.1),
+                              backgroundColor: AppColors.primary.withOpacity(
+                                .1,
+                              ),
 
                               child: Icon(
                                 item["icon"],
@@ -219,17 +200,14 @@ class _PemilihanPeminjamanPageState extends State<PemilihanPeminjamanPage> {
 
                             Expanded(
                               child: Column(
-                                crossAxisAlignment:
-                                    CrossAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
 
                                 children: [
-
                                   Text(
                                     item["name"],
 
                                     style: const TextStyle(
-                                      fontWeight:
-                                          FontWeight.bold,
+                                      fontWeight: FontWeight.bold,
 
                                       fontSize: 16,
                                     ),
@@ -237,9 +215,7 @@ class _PemilihanPeminjamanPageState extends State<PemilihanPeminjamanPage> {
 
                                   const SizedBox(height: 4),
 
-                                  Text(
-                                    "Kode : ${item["code"]}",
-                                  ),
+                                  Text("Kode : ${item["code"]}"),
                                 ],
                               ),
                             ),
@@ -250,21 +226,15 @@ class _PemilihanPeminjamanPageState extends State<PemilihanPeminjamanPage> {
 
                         Row(
                           children: [
-
                             const Text(
                               "Status : ",
-                              style: TextStyle(
-                                fontWeight:
-                                    FontWeight.w600,
-                              ),
+                              style: TextStyle(fontWeight: FontWeight.w600),
                             ),
 
                             Icon(
                               Icons.circle,
                               size: 12,
-                              color: tersedia
-                                  ? Colors.green
-                                  : Colors.red,
+                              color: tersedia ? Colors.green : Colors.red,
                             ),
 
                             const SizedBox(width: 6),
@@ -277,19 +247,13 @@ class _PemilihanPeminjamanPageState extends State<PemilihanPeminjamanPage> {
 
                         Row(
                           children: [
-
                             Expanded(
                               child: OutlinedButton(
-
                                 onPressed: () {
-
                                   // nanti menuju detail barang
-
                                 },
 
-                                child: const Text(
-                                  "Lihat Detail",
-                                ),
+                                child: const Text("Lihat Detail"),
                               ),
                             ),
 
@@ -297,35 +261,26 @@ class _PemilihanPeminjamanPageState extends State<PemilihanPeminjamanPage> {
 
                             Expanded(
                               child: ElevatedButton(
-
                                 onPressed: tersedia
                                     ? () {
-
                                         Navigator.push(
                                           context,
                                           MaterialPageRoute(
-                                            builder: (_) =>
-                                                LoanFormPage(
-                                              deviceName:
-                                                  item["name"],
+                                            builder: (_) => LoanFormPage(
+                                              deviceName: item["name"],
                                             ),
                                           ),
                                         );
-
                                       }
                                     : null,
 
                                 child: Text(
-                                  tersedia
-                                      ? "Pilih"
-                                      : "Tidak Tersedia",
+                                  tersedia ? "Pilih" : "Tidak Tersedia",
                                 ),
                               ),
                             ),
-
                           ],
-                        )
-
+                        ),
                       ],
                     ),
                   ),

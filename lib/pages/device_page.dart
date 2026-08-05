@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import '../../widgets/custom_button_nav.dart';
+import 'history/history_page.dart';
+import 'dashboard_page.dart';
+import '../theme/app_colors.dart';
+import 'profil/profil_page.dart';
 
 class Device {
   final String name;
@@ -41,6 +46,7 @@ class _DevicePageState extends State<DevicePage> {
   final TextEditingController searchController = TextEditingController();
 
   String selectedCategory = "Semua";
+  int selectedIndex = 1;
 
   final List<String> categories = const [
     "Semua",
@@ -92,8 +98,8 @@ class _DevicePageState extends State<DevicePage> {
     final keyword = searchController.text.trim().toLowerCase();
 
     return devices.where((device) {
-      final sameCategory = selectedCategory == "Semua" ||
-          device.category == selectedCategory;
+      final sameCategory =
+          selectedCategory == "Semua" || device.category == selectedCategory;
 
       final sameSearch =
           device.name.toLowerCase().contains(keyword) ||
@@ -117,25 +123,28 @@ class _DevicePageState extends State<DevicePage> {
       backgroundColor: const Color(0xffF5F7FB),
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.transparent,
+        // PERBAIKAN 1: Gradien dimasukkan ke flexibleSpace
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [AppColors.primaryDark, AppColors.primary],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
         surfaceTintColor: Colors.white,
         centerTitle: true,
         title: const Text(
           "Daftar Perangkat",
           style: TextStyle(
-            color: Colors.black87,
+            color: Colors
+                .white, // Sesuaikan warna teks agar kontras dengan gradien
             fontWeight: FontWeight.bold,
           ),
         ),
-        leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back_ios_new,
-            color: Colors.black87,
-          ),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
+
       ),
       body: SafeArea(
         top: false,
@@ -198,8 +207,9 @@ class _DevicePageState extends State<DevicePage> {
                       side: BorderSide.none,
                       labelStyle: TextStyle(
                         color: selected ? Colors.white : Colors.black87,
-                        fontWeight:
-                            selected ? FontWeight.bold : FontWeight.normal,
+                        fontWeight: selected
+                            ? FontWeight.bold
+                            : FontWeight.normal,
                       ),
                       onSelected: (_) {
                         setState(() {
@@ -231,6 +241,48 @@ class _DevicePageState extends State<DevicePage> {
           ],
         ),
       ),
+      // PERBAIKAN 2: Menggunakan pushReplacement agar tidak menumpuk stack navigasi
+      bottomNavigationBar: CustomBottomNav(
+        currentIndex: selectedIndex,
+        onTap: (index) {
+          if (index == selectedIndex)
+            return; // Cegah navigasi ulang ke halaman yang sama
+
+          if (index == 0) {
+            Navigator.pushReplacement(
+              context,
+              PageRouteBuilder(
+                pageBuilder: (_, __, ___) => const DashboardPage(),
+                transitionDuration: Duration.zero,
+              ),
+            );
+          } else if (index == 1) {
+            Navigator.pushReplacement(
+              context,
+              PageRouteBuilder(
+                pageBuilder: (_, __, ___) => const DevicePage(),
+                transitionDuration: Duration.zero,
+              ),
+            );
+          } else if (index == 2) {
+            Navigator.pushReplacement(
+              context,
+              PageRouteBuilder(
+                pageBuilder: (_, __, ___) => const HistoryPage(),
+                transitionDuration: Duration.zero,
+              ),
+            );
+          } else if (index == 3) {
+            Navigator.pushReplacement(
+              context,
+              PageRouteBuilder(
+                pageBuilder: (_, __, ___) => const ProfilePage(),
+                transitionDuration: Duration.zero,
+              ),
+            );
+          }
+        },
+      ),
     );
   }
 }
@@ -238,10 +290,7 @@ class _DevicePageState extends State<DevicePage> {
 class DeviceCard extends StatelessWidget {
   final Device device;
 
-  const DeviceCard({
-    super.key,
-    required this.device,
-  });
+  const DeviceCard({super.key, required this.device});
 
   @override
   Widget build(BuildContext context) {
@@ -320,9 +369,7 @@ class DeviceCard extends StatelessWidget {
                       const SizedBox(height: 5),
                       Text(
                         device.category,
-                        style: TextStyle(
-                          color: Colors.grey.shade600,
-                        ),
+                        style: TextStyle(color: Colors.grey.shade600),
                       ),
                       const SizedBox(height: 8),
                       Row(
@@ -335,9 +382,7 @@ class DeviceCard extends StatelessWidget {
                           const SizedBox(width: 5),
                           Text(
                             "Stok: ${device.stock} unit",
-                            style: const TextStyle(
-                              fontWeight: FontWeight.w500,
-                            ),
+                            style: const TextStyle(fontWeight: FontWeight.w500),
                           ),
                         ],
                       ),
@@ -399,18 +444,13 @@ class EmptyDeviceView extends StatelessWidget {
             const SizedBox(height: 15),
             const Text(
               "Perangkat tidak ditemukan",
-              style: TextStyle(
-                fontSize: 17,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 6),
             Text(
               "Coba gunakan kata pencarian atau kategori lain.",
               textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.grey.shade600,
-              ),
+              style: TextStyle(color: Colors.grey.shade600),
             ),
           ],
         ),
@@ -422,10 +462,7 @@ class EmptyDeviceView extends StatelessWidget {
 class DeviceDetailPage extends StatelessWidget {
   final Device device;
 
-  const DeviceDetailPage({
-    super.key,
-    required this.device,
-  });
+  const DeviceDetailPage({super.key, required this.device});
 
   bool get canBorrow {
     return device.status == "Tersedia" && device.stock > 0;
@@ -447,7 +484,9 @@ class DeviceDetailPage extends StatelessWidget {
   }
 
   String get serialNumber {
-    final categoryCode = device.category.toUpperCase().substring(0, 2);
+    final categoryCode = device.category
+        .substring(0, device.category.length < 2 ? device.category.length : 2)
+        .toUpperCase();
     return "BM-$categoryCode-2026-001";
   }
 
@@ -465,10 +504,7 @@ class DeviceDetailPage extends StatelessWidget {
         iconTheme: const IconThemeData(color: Colors.black87),
         title: const Text(
           "Detail Perangkat",
-          style: TextStyle(
-            color: Colors.black87,
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(color: Colors.black87, fontWeight: FontWeight.bold),
         ),
       ),
       body: SafeArea(
@@ -528,10 +564,7 @@ class DeviceDetailPage extends StatelessWidget {
 
               Text(
                 device.category,
-                style: TextStyle(
-                  color: Colors.grey.shade600,
-                  fontSize: 16,
-                ),
+                style: TextStyle(color: Colors.grey.shade600, fontSize: 16),
               ),
 
               const SizedBox(height: 12),
@@ -610,10 +643,7 @@ class DeviceDetailPage extends StatelessWidget {
                     "Perangkat inventaris Balai Monitor yang dapat digunakan "
                     "oleh pegawai untuk mendukung kegiatan operasional, "
                     "monitoring, dan pelaksanaan tugas lapangan.",
-                    style: TextStyle(
-                      height: 1.6,
-                      color: Colors.black87,
-                    ),
+                    style: TextStyle(height: 1.6, color: Colors.black87),
                   ),
                 ],
               ),
@@ -677,11 +707,7 @@ class DetailSection extends StatelessWidget {
   final String title;
   final List<Widget> children;
 
-  const DetailSection({
-    super.key,
-    required this.title,
-    required this.children,
-  });
+  const DetailSection({super.key, required this.title, required this.children});
 
   @override
   Widget build(BuildContext context) {
@@ -704,10 +730,7 @@ class DetailSection extends StatelessWidget {
         children: [
           Text(
             title,
-            style: const TextStyle(
-              fontSize: 17,
-              fontWeight: FontWeight.bold,
-            ),
+            style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 16),
           ...children,
@@ -742,11 +765,7 @@ class DetailRow extends StatelessWidget {
             color: const Color(0xff0A4DA3).withOpacity(0.1),
             borderRadius: BorderRadius.circular(10),
           ),
-          child: const Icon(
-            Icons.info_outline,
-            color: Color(0xff0A4DA3),
-            size: 21,
-          ),
+          child: Icon(icon, color: const Color(0xff0A4DA3), size: 21),
         ),
         const SizedBox(width: 12),
         Expanded(
