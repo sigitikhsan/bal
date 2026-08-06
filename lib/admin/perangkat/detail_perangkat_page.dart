@@ -6,6 +6,7 @@ class DetailPerangkatPage extends StatelessWidget {
   final String nama;
   final String kode;
   final String kategori;
+  final String jumlah;
   final String status;
   final String kondisi;
 
@@ -14,6 +15,7 @@ class DetailPerangkatPage extends StatelessWidget {
     required this.nama,
     required this.kode,
     required this.kategori,
+    required this.jumlah,
     required this.status,
     required this.kondisi,
   });
@@ -189,6 +191,14 @@ class DetailPerangkatPage extends StatelessWidget {
               icon: Icons.category_outlined,
               title: 'Kategori',
               value: kategori,
+            ),
+
+            const SizedBox(height: 11),
+
+            DetailInfoCard(
+              icon: Icons.inventory_2_outlined,
+              title: 'Jumlah Perangkat',
+              value: '$jumlah Unit',
             ),
 
             const SizedBox(height: 11),

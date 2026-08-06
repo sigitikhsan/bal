@@ -4,6 +4,7 @@ import '../../theme/app_colors.dart';
 import '../permohonan/daftar_permohonan_page.dart';
 import '../perangkat/daftar_perangkat_page.dart';
 import '../pengembalian/pengembalian_page.dart';
+import '../../pages/login_page.dart';
 
 class AdminDashboardPage extends StatelessWidget {
   const AdminDashboardPage({super.key});
@@ -43,20 +44,102 @@ class AdminDashboardPage extends StatelessWidget {
         ),
 
         actions: [
-          IconButton(
-            onPressed: () {
-              // Halaman notifikasi nanti
-            },
-
-            icon: const Icon(
-              Icons.notifications_none_rounded,
-              color: AppColors.textPrimary,
-              size: 27,
+            // NOTIFIKASI
+            IconButton(
+              onPressed: () {
+                // Halaman notifikasi nanti
+              },
+              icon: const Icon(
+                Icons.notifications_none_rounded,
+                color: AppColors.textPrimary,
+                size: 27,
+              ),
             ),
-          ),
 
-          const SizedBox(width: 5),
-        ],
+            // LOGOUT
+            IconButton(
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+
+                      title: const Text(
+                        'Logout?',
+                        style: TextStyle(
+                          fontSize: 21,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+
+                      content: const Text(
+                        'Apakah Anda yakin ingin keluar dari akun?',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: AppColors.textSecondary,
+                        ),
+                      ),
+
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+
+                          child: const Text(
+                            'Batal',
+                            style: TextStyle(
+                              fontSize: 16,
+                            ),
+                          ),
+                        ),
+
+                        ElevatedButton(
+                          onPressed: () {
+                            Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    const LoginPage(),
+                              ),
+                              (route) => false,
+                            );
+                          },
+
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor:
+                                AppColors.danger,
+
+                            foregroundColor:
+                                Colors.white,
+                          ),
+
+                          child: const Text(
+                            'Logout',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
+
+              icon: const Icon(
+                Icons.logout_rounded,
+                color: AppColors.danger,
+                size: 25,
+              ),
+            ),
+
+            const SizedBox(width: 5),
+          ],
       ),
 
       body: SingleChildScrollView(

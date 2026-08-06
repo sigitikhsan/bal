@@ -17,42 +17,47 @@ class _DaftarPerangkatPageState
   String selectedFilter = 'Semua';
 
   final List<Map<String, String>> daftarPerangkat = [
-    {
-      'nama': 'Laptop Lenovo ThinkPad',
-      'kode': 'LPT-001',
-      'kategori': 'Laptop',
-      'status': 'Tersedia',
-      'kondisi': 'Baik',
-    },
-    {
-      'nama': 'HT Motorola GP328',
-      'kode': 'HT-002',
-      'kategori': 'Radio Komunikasi',
-      'status': 'Dipinjam',
-      'kondisi': 'Baik',
-    },
-    {
-      'nama': 'Laptop ASUS VivoBook',
-      'kode': 'LPT-003',
-      'kategori': 'Laptop',
-      'status': 'Maintenance',
-      'kondisi': 'Perlu Perbaikan',
-    },
-    {
-      'nama': 'Kamera Canon EOS',
-      'kode': 'KMR-004',
-      'kategori': 'Kamera',
-      'status': 'Tersedia',
-      'kondisi': 'Baik',
-    },
-    {
-      'nama': 'Radio HT Icom',
-      'kode': 'HT-005',
-      'kategori': 'Radio Komunikasi',
-      'status': 'Tersedia',
-      'kondisi': 'Baik',
-    },
-  ];
+      {
+        'nama': 'Laptop Lenovo ThinkPad',
+        'kode': 'LPT-001',
+        'kategori': 'Laptop',
+        'jumlah': '5',
+        'status': 'Tersedia',
+        'kondisi': 'Baik',
+      },
+      {
+        'nama': 'HT Motorola GP328',
+        'kode': 'HT-002',
+        'kategori': 'Radio Komunikasi',
+        'jumlah': '10',
+        'status': 'Dipinjam',
+        'kondisi': 'Baik',
+      },
+      {
+        'nama': 'Laptop ASUS VivoBook',
+        'kode': 'LPT-003',
+        'kategori': 'Laptop',
+        'jumlah': '3',
+        'status': 'Maintenance',
+        'kondisi': 'Perlu Perbaikan',
+      },
+      {
+        'nama': 'Kamera Canon EOS',
+        'kode': 'KMR-004',
+        'kategori': 'Kamera',
+        'jumlah': '2',
+        'status': 'Tersedia',
+        'kondisi': 'Baik',
+      },
+      {
+        'nama': 'Radio HT Icom',
+        'kode': 'HT-005',
+        'kategori': 'Radio Komunikasi',
+        'jumlah': '7',
+        'status': 'Tersedia',
+        'kondisi': 'Baik',
+      },
+    ];
 
   List<Map<String, String>> get perangkatTampil {
     if (selectedFilter == 'Semua') {
@@ -408,6 +413,7 @@ class _DaftarPerangkatPageState
                         nama: perangkat['nama']!,
                         kode: perangkat['kode']!,
                         kategori: perangkat['kategori']!,
+                        jumlah: perangkat['jumlah']!,
                         status: perangkat['status']!,
                         kondisi: perangkat['kondisi']!,
 
@@ -419,6 +425,7 @@ class _DaftarPerangkatPageState
                                 nama: perangkat['nama']!,
                                 kode: perangkat['kode']!,
                                 kategori: perangkat['kategori']!,
+                                jumlah: perangkat['jumlah']!,
                                 status: perangkat['status']!,
                                 kondisi: perangkat['kondisi']!,
                               ),
@@ -519,6 +526,7 @@ class PerangkatCard
   final String nama;
   final String kode;
   final String kategori;
+  final String jumlah;
   final String status;
   final String kondisi;
   final VoidCallback onTap;
@@ -528,6 +536,7 @@ class PerangkatCard
     required this.nama,
     required this.kode,
     required this.kategori,
+    required this.jumlah,
     required this.status,
     required this.kondisi,
     required this.onTap,
@@ -645,51 +654,58 @@ class PerangkatCard
 
                 Expanded(
                   child: Column(
-                    crossAxisAlignment:
-                        CrossAxisAlignment
-                            .start,
-
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         nama,
-
                         maxLines: 2,
-
-                        overflow:
-                            TextOverflow
-                                .ellipsis,
-
-                        style:
-                            const TextStyle(
-                          color:
-                              AppColors
-                                  .textPrimary,
-
-                          fontSize:
-                              18,
-
-                          fontWeight:
-                              FontWeight
-                                  .bold,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          color: AppColors.textPrimary,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
 
-                      const SizedBox(
-                        height: 5,
-                      ),
+                      const SizedBox(height: 4),
 
                       Text(
                         '$kode • $kategori',
-
-                        style:
-                            const TextStyle(
-                          color:
-                              AppColors
-                                  .textSecondary,
-
-                          fontSize:
-                              14,
+                        style: const TextStyle(
+                          color: AppColors.textSecondary,
+                          fontSize: 14,
                         ),
+                      ),
+
+                      const SizedBox(height: 6),
+
+                      Row(
+                        children: [
+                          const Icon(
+                            Icons.inventory_2_outlined,
+                            size: 18,
+                            color: AppColors.primary,
+                          ),
+
+                          const SizedBox(width: 6),
+
+                          Text(
+                            'Jumlah : ',
+                            style: const TextStyle(
+                              color: AppColors.textSecondary,
+                              fontSize: 14,
+                            ),
+                          ),
+
+                          Text(
+                            '$jumlah Unit',
+                            style: const TextStyle(
+                              color: AppColors.textPrimary,
+                              fontSize: 15,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
